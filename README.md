@@ -1,93 +1,50 @@
-<p align="center">
-    <img src="https://static.magento.com/sites/all/themes/magento/logo.svg" width="300px" alt="Magento Commerce" />
-</p>
 
-#  Magento 2 Docker to Development
+# Docker Magento 2.4.X Open Source (CE) 02-2021
 
-### Features
+Docker containers for Magento 2.4.x development including :
 
-- Magento 2.4
-- Apache
-- PHP 7.1, PHP 7.2, PHP 7.3, PHP 7.4
-- Xdebug 2.9.8
-- MariaDB 10.4.13
-- Elasticsearch 7.6
-- Varnish 6.4
-- Redis
-- MailHog
-- n98-magerun
+  - PHP 7.4
+  - Apache 2.4
+  - MYSQL 8
+  - Varnish 6 FPC  
+  - RabbitMQ  
+  - PhpMyAdmin
+  - memcached
+  - ELASTIC search 7.x
+  - REDIS Session, System, FPC
+  - Scaleable php-apache service
 
-| PHP Version  | Composer  | [hirak/prestissimo](https://github.com/hirak/prestissimo) |
-|---|---|---|
-|7.1|1.10.17|Yes|
-|7.2|1.10.17|Yes|
-|7.3|1.10.17|Yes|
-|7.4|2.*|No|
+## Installation
 
-### Requirements
+1. git clone https://github.com/gaiterjones/docker-magento2  
+2. EDIT .env - **add your Magento authentication keys**  
+3. `docker-compose build`
+4. `docker-compose up -d`   
+5. Install sample data
 
-**Linux:**
+docker exec -i -t --user magento magento2_php-apache_1 install-sampledata  
 
-Install [Docker](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/) and [Docker-compose](https://docs.docker.com/compose/install/#install-compose).
+6. Install Magento
 
+docker exec -i -t --user magento magento2_php-apache_1 install-magento
 
-### Before start
-Note that for Elasticsearch you need at least 262144 memory. 
+7. Disable 2FA for testing
 
-To check:
-```
-more /proc/sys/vm/max_map_count
-```
+docker exec -i -t --user magento magento2_php-apache_1 bin/magento module:disable Magento_TwoFactorAuth
 
-The vm.max_map_count setting should be set permanently in `/etc/sysctl.conf`:
-```
-vm.max_map_count=262144
-```
-After set run:
-```
-sudo sysctl -p
-```
+## Test
+
+ - Admin
+http://magento2.dev.com/admin  
+ - Frontend
+http://magento2.dev.com   
+ - CLI
 
 
-### How to use
-Change the _MAGENTO2_ to your project's name and run:
+    docker exec -i -t --user magento magento2_php-apache_1 /bin/bash
 
-```
-curl -s https://raw.githubusercontent.com/echo-magento/docker-magento2/master/init | bash -s MAGENTO2  clone
-```
+### More
 
-To install the latest version of Magento 2:
+https://blog.gaiterjones.com/docker-magento-2-development-deployment-php7-apache2-4-redis-varnish-scaleable/ for further deployment instructions.
 
-```
-cd MAGENTO2
-./shell
-rm index.php
-install-magento2
-```
-
-> If you want to use Varnish use `docker-compose.varnish.yml`
->
-> If you don't want to use Varnish and Elasticsearch use `docker-compose.light.yml`
-
-### Panels
-
-**Web server:** http://localhost/
-
-**Local emails:** http://localhost:8025
-
-### Features commands
-
-| Commands  | Description  | Options & Examples |
-|---|---|---|
-| `bin/init`  | If you didn't use the CURL setup command above, please use this command changing the name of the project.  | `./init MYMAGENTO2` |
-| `bin/start`  | If you continuing not using the CURL you can start your container manually  | |
-| `bin/stop`  | Stop your project containers  | |
-| `bin/kill`  | Stops containers and removes containers, networks, volumes, and images created to the specific project  | |
-| `bin/shell`  | Access your container  | `./shell root` | |
-| `bin/magento`  | Use the power of the Magento CLI  | |
-| `bin/magento-basic`  | All basic Magento CLI commands (setup:upgrade, setup:di:compile, setup:static-content:deploy -f, cache:clean, cache:flush)  | |
-| `bin/n98`  | Use the Magerun commands as you want | |
-| `bin/grunt-init`  | Prepare to use Grunt  | |
-| `bin/grunt`  | Use Grunt specifically in your theme or completely, it'll do the deploy and the watcher.  | `./grunt luma` |
-| `bin/xdebug`  |  Enable / Disable the XDebug | |
-| `bin/composer`  |  Use Composer commands | `./composer update` |
+![MAGENTO2 INSTALL](https://blog.gaiterjones.com/dropbox/docker-install-magento240.gif)
